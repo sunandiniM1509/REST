@@ -32,7 +32,7 @@ import io.searchbox.core.SearchResult;
 
 public class ElasticSearchManager {
     private static final String SERVER = "http://34.202.206.222:8080";
-    private static final String INDEX = "707065150"; // TODO: MUST CHANGE THIS to random number string
+    private static final String INDEX = "993260069"; // TODO: MUST CHANGE THIS to random number string
     private static final String ITEM_TYPE = "items";
     private static final String USER_TYPE = "users";
     private static JestDroidClient client;
@@ -217,7 +217,10 @@ public class ElasticSearchManager {
         }
     }
 
-/**
+
+
+
+    /**
      * Get bid from remote server
      */
     public static class GetBidListTask extends AsyncTask<Void,Void,ArrayList<Bid>> {
@@ -277,6 +280,35 @@ public class ElasticSearchManager {
             return success;
         }
     }
+
+
+    /**
+     * Delete bid from remote server using bid_id
+     */
+    public static class RemoveBidTask extends AsyncTask<Bid,Void,Boolean> {
+
+        @Override
+        protected Boolean doInBackground(User... params) {
+
+            verifyConfig();
+            Boolean success = false;
+            Bid bid = params[0];
+            try {
+                DocumentResult execute = client.execute(new Delete.Builder(Bid.getBidId()).index(INDEX).type(BID_TYPE).build());
+                if(execute.isSucceeded()) {
+                    Log.i("ELASTICSEARCH", "Bid was successfully deleted");
+                    success = true;
+                } else {
+                    Log.e("ELASTICSEARCH", "Bid delete failed");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return success;
+        }
+    }
+
 
     // If no client, add one
     private static void verifyConfig() {
